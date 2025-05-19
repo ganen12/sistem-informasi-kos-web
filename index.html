@@ -51,8 +51,6 @@
         line-height: normal;
         letter-spacing: 1.2px;
     }
-
-
     .menu-list {
         padding: 0.75rem 0 0.75rem 0;
         font-size: 20px;
@@ -62,6 +60,7 @@
 <body>
 
 <div class="container-fluid">
+
   <div class="row">
     <!-- Sidebar -->
     <nav class="col-md-2 sidebar d-flex flex-column p-3">
@@ -69,23 +68,23 @@
         <h5><i class="bi bi-house-door-fill me-2"></i>Kos Husni</h5>
       </div>
       <ul class="nav flex-column mb-auto">
-        <li class="nav-item">
-          <a href="#" class="nav-link active"><i class="bi bi-house-door me-2 menu-list"></i>Dashboard</a>
-        </li>
+        <li><a href="index.html" class="nav-link active"><i class="bi bi-house-door me-2 menu-list"></i>Dashboard</a></li>
         <li class="mt-4 text-uppercase small section-label">Data</li>
-        <li>
-          <a href="kamar.html" class="nav-link"><i class="bi bi-door-closed me-2 menu-list"></i>Kamar</a>
-        </li>
-        <li>
-          <a href="penyewa.html" class="nav-link"><i class="bi bi-people-fill me-2 menu-list"></i>Penyewa</a>
-        </li>
+        <li><a href="kamar.html" class="nav-link"><i class="bi bi-door-closed me-2 menu-list"></i>Kamar</a></li>
+        <li><a href="penyewa.html" class="nav-link"><i class="bi bi-people-fill me-2 menu-list"></i>Penyewa</a></li>
         <li class="mt-4 text-uppercase small section-label">Transaksi</li>
-        <li>
-          <a href="pembayaran.html" class="nav-link"><i class="bi bi-receipt me-2 menu-list"></i>Pembayaran</a>
-        </li>
+        <li><a href="pembayaran.html" class="nav-link"><i class="bi bi-receipt me-2 menu-list"></i>Pembayaran</a></li>
+        <li class="mt-4 text-uppercase small section-label">Lainnya</li>
+        <li><a href="keluhan.html" class="nav-link"><i class="bi bi-exclamation-triangle me-2 menu-list"></i>Keluhan</a></li>
       </ul>
       <div class="mt-auto">
-        <a href="#" class="nav-link"><i class="bi bi-box-arrow-right me-2 menu-list"></i>Logout</a>
+        <ul class="nav flex-column mb-auto">
+            <li class="">
+                <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <i class="bi bi-box-arrow-right me-2 menu-list"></i>Logout
+                </a>
+            </li>
+        </ul>
       </div>
     </nav>
 
@@ -95,7 +94,7 @@
       <div class="d-flex justify-content-between align-items-center py-3 brand px-4">
         <div class="h5 mb-0">Dashboard</div>
         <div class="d-flex align-items-center gap-3">
-          <i class="bi bi-bell-fill fs-5"></i>
+          <i class="bi bi-bell-fill fs-5" id="notificationIcon" style="cursor: pointer;"></i>
           <div><i class="bi bi-person-circle me-1"></i> sadmin</div>
         </div>
       </div>
@@ -169,4 +168,50 @@
     </main>
   </div>
 </div>
+<!-- logout confirmation modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin keluar dari sistem?</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-start">
+        <button type="button" class="btn btn-danger" id="confirmLogout">Logout</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title" id="notificationModalLabel">Notifikasi</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="notificationMessage">Isi pesan notifikasi akan muncul di sini.</p>
+      </div>
+      <div class="modal-footer justify-content-end"> {/* Atau justify-content-center jika ingin tombol di tengah */}
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Logout Confirmation
+    document.getElementById('confirmLogout').addEventListener('click', function() {
+    // Redirect ke halaman login
+    window.location.href = 'login.html';
+  });
+</script>
+
+</body>
 </html>

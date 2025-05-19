@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <title>Page Pembayaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
@@ -81,9 +81,17 @@
         <li>
           <a href="#" class="nav-link active"><i class="bi bi-receipt me-2 menu-list"></i>Pembayaran</a>
         </li>
+        <li class="mt-4 text-uppercase small section-label">Lainnya</li>
+        <li><a href="keluhan.html" class="nav-link"><i class="bi bi-exclamation-triangle me-2 menu-list"></i>Keluhan</a></li>
       </ul>
       <div class="mt-auto">
-        <a href="#" class="nav-link"><i class="bi bi-box-arrow-right me-2 menu-list"></i>Logout</a>
+        <ul class="nav flex-column mb-auto">
+            <li class="">
+                <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <i class="bi bi-box-arrow-right me-2 menu-list"></i>Logout
+                </a>
+            </li>
+        </ul>
       </div>
     </nav>
 
@@ -99,14 +107,56 @@
       </div>
 
       <!-- Content -->
-      <!-- Content -->
+      <div class="container mt-4">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div class="card text-white bg-warning card-stat p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h4 id="totalSewaCount">0</h4>
+                  <p class="mb-0">Total Sewa</p>
+                </div>
+                <i class="bi bi-calendar-event-fill card-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card text-white bg-success card-stat p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 id="totalDibayar">Rp 0</h5>
+                  <p class="mb-0">Dibayar</p>
+                </div>
+                <i class="bi bi-arrow-up-right-circle-fill card-icon"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card text-white bg-danger card-stat p-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 id="totalBelumDibayar">Rp 0</h5>
+                  <p class="mb-0">Belum Dibayar</p>
+                </div>
+                <i class="bi bi-arrow-down-left-circle-fill card-icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+            
+
+      <!-- CRUD Pembayaran -->
       <div class="container-fluid mt-4">
         <div class="card p-4">
           <div class="d-flex justify-content-between mb-3">
             <h5>Data Pembayaran</h5>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tambahPembayaranModal">
-              <i class="bi bi-plus-circle me-2"></i>Tambah Pembayaran
-            </button>
+            <div class=" d-flex gap-2">
+              <input type="text" class="form-control" placeholder="Cari..." id="searchInput" />
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#tambahPembayaranModal">
+                    <i class="bi bi-plus-circle me-2"></i>Tambah Pembayaran
+                </button>
+            </div>
           </div>
 
           <table class="table table-striped">
@@ -116,7 +166,7 @@
                 <th>Properti</th>
                 <th>Kamar</th>
                 <th>Total Tagihan</th>
-                <th>Sewa Berjalan</th>
+                <th>Jumlah Dibayar</th>
                 <th>Jatuh Tempo</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -159,8 +209,8 @@
             <input type="number" class="form-control" id="totalSewa" required>
           </div>
           <div class="mb-3">
-            <label class="form-label rupiah">Sewa Berjalan (Rp)</label>
-            <input type="number" class="form-control" id="sewaBerjalan" required>
+            <label class="form-label rupiah">Jumlah Dibayar (Rp)</label>
+            <input type="number" class="form-control" id="jumlahDibayar" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Jatuh Tempo</label>
@@ -177,6 +227,25 @@
           
           <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- logout confirmation modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin keluar dari sistem?</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-start">
+        <button type="button" class="btn btn-danger" id="confirmLogout">Logout</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
       </div>
     </div>
   </div>
@@ -224,13 +293,13 @@ document.getElementById('formPembayaran').addEventListener('submit', function (e
     e.preventDefault();
   
     const totalSewaRaw = document.getElementById('totalSewa').value.replace(/\./g, '');
-    const sewaBerjalanRaw = document.getElementById('sewaBerjalan').value.replace(/\./g, '');
+    const jumlahDibayarRaw = document.getElementById('jumlahDibayar').value.replace(/\./g, '');
   
     const nama = document.getElementById('nama').value;
     const properti = document.getElementById('properti').value;
     const kamar = document.getElementById('kamar').value;
     const totalSewa = parseInt(totalSewaRaw).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
-    const sewaBerjalan = parseInt(sewaBerjalanRaw).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+    const jumlahDibayar = parseInt(jumlahDibayarRaw).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
     const jatuhTempo = document.getElementById('jatuhTempo').value;
     const status = document.getElementById('statusPembayaran').value;
 
@@ -242,7 +311,7 @@ document.getElementById('formPembayaran').addEventListener('submit', function (e
       kolom[1].innerText = properti;
       kolom[2].innerText = kamar;
       kolom[3].innerText = totalSewa;
-      kolom[4].innerText = sewaBerjalan;
+      kolom[4].innerText = jumlahDibayar;
       kolom[5].innerText = jatuhTempo;
       kolom[6].innerText = status;
       
@@ -258,7 +327,7 @@ document.getElementById('formPembayaran').addEventListener('submit', function (e
         <td>${properti}</td>
         <td>${kamar}</td>
         <td>${totalSewa}</td>
-        <td>${sewaBerjalan}</td>
+        <td>${jumlahDibayar}</td>
         <td>${jatuhTempo}</td>
         <td class='fw-bold'>${status}</td>
         <td>
@@ -283,7 +352,7 @@ document.getElementById('formPembayaran').addEventListener('submit', function (e
         document.getElementById('properti').value = kolom[1].innerText;
         document.getElementById('kamar').value = kolom[2].innerText;
         document.getElementById('totalSewa').value = kolom[3].innerText.replace(/[^\d]/g, '');
-        document.getElementById('sewaBerjalan').value = kolom[4].innerText.replace(/[^\d]/g, '');
+        document.getElementById('jumlahDibayar').value = kolom[4].innerText.replace(/[^\d]/g, '');
         document.getElementById('jatuhTempo').value = kolom[5].innerText;
         document.getElementById('statusPembayaran').value = kolom[6].innerText;
 
@@ -297,6 +366,7 @@ document.getElementById('formPembayaran').addEventListener('submit', function (e
     document.getElementById('formPembayaran').reset();
     const modal = bootstrap.Modal.getInstance(document.getElementById('tambahPembayaranModal'));
     modal.hide();
+    updateRingkasan();
 });
 </script>
 
@@ -321,7 +391,50 @@ document.getElementById('formPembayaran').addEventListener('submit', function (e
         const toast = new bootstrap.Toast(toastElement);
         toast.show();
     }
-      
+
 </script>
+
+<script>
+  function updateRingkasan() {
+    const rows = document.querySelectorAll('#tabelPembayaran tr');
+    let total = 0;
+    let totalDibayar = 0;
+    let totalBelumDibayar = 0;
+
+    rows.forEach(row => {
+      const totalTagihanText = row.children[3].innerText.replace(/[\D]/g, '');
+      const jumlahDibayarText = row.children[4].innerText.replace(/[\D]/g, '');
+      const totalTagihan = parseInt(totalTagihanText) || 0;
+      const jumlahDibayar = parseInt(jumlahDibayarText) || 0;
+
+      total++;
+      totalDibayar += jumlahDibayar;
+      totalBelumDibayar += Math.max(totalTagihan - jumlahDibayar, 0);
+    });
+
+    document.getElementById('totalSewaCount').innerText = total;
+    document.getElementById('totalDibayar').innerText = 'Rp ' + totalDibayar.toLocaleString('id-ID');
+    document.getElementById('totalBelumDibayar').innerText = 'Rp ' + totalBelumDibayar.toLocaleString('id-ID');
+  }
+
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+    const keyword = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#tabelKeluhan tr');
+    rows.forEach(row => {
+    const rowText = row.innerText.toLowerCase();
+    row.style.display = rowText.includes(keyword) ? '' : 'none';
+    });
+  });
+  </script>
+
+  <script>
+  // Logout Confirmation
+    document.getElementById('confirmLogout').addEventListener('click', function() {
+    // Redirect ke halaman login
+    window.location.href = 'login.html';
+  });
+</script>
+
 </body>
 </html>
