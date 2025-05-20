@@ -35,7 +35,7 @@ function updateKamarOverview() {
         let terisi = 0;
 
         rows.forEach(row => {
-            const status = row.children[4]?.innerText.trim();
+            const status = row.children[1]?.innerText.trim();
             if (status === "Terisi") {
                 terisi++;
             }
@@ -72,9 +72,9 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
 
             const nomor = document.getElementById('nomor').value;
-            const nama = document.getElementById('namaPenyewa').value;
-            const email = document.getElementById('email').value;
-            const noHP = document.getElementById('noHP').value;
+            // const nama = document.getElementById('namaPenyewa').value;
+            // const email = document.getElementById('email').value;
+            // const noHP = document.getElementById('noHP').value;
             const status = document.getElementById('statusKamar').value;
             const hargaRaw = document.getElementById('hargaPerBulan').value.replace(/\./g, '');
             const harga = parseInt(hargaRaw).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
@@ -83,22 +83,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update
                 const kolom = barisSedangDiedit.querySelectorAll('td');
                 kolom[0].innerText = nomor;
-                kolom[1].innerText = nama;
-                kolom[2].innerText = email;
-                kolom[3].innerText = noHP;
-                kolom[4].innerText = status;
-                kolom[5].innerText = harga;
+                // kolom[1].innerText = nama;
+                // kolom[2].innerText = email;
+                // kolom[3].innerText = noHP;
+                kolom[1].innerText = status;
+                kolom[2].innerText = harga;
 
                 barisSedangDiedit = null;
                 tampilkanToast('Data kamar berhasil diperbarui!', 'success');
             } else {
                 // Create
+                    // <td>${nama}</td>
+                    // <td>${email}</td>
+                    // <td>${noHP}</td>
                 const barisBaru = document.createElement('tr');
                 barisBaru.innerHTML = `
                     <td>${nomor}</td>
-                    <td>${nama}</td>
-                    <td>${email}</td>
-                    <td>${noHP}</td>
                     <td>${status}</td>
                     <td>${harga}</td>
                     <td>
@@ -121,11 +121,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     barisSedangDiedit = barisBaru;
                     const kolom = barisBaru.querySelectorAll('td');
                     document.getElementById('nomor').value = kolom[0].innerText;
-                    document.getElementById('namaPenyewa').value = kolom[1].innerText;
-                    document.getElementById('email').value = kolom[2].innerText;
-                    document.getElementById('noHP').value = kolom[3].innerText;
-                    document.getElementById('statusKamar').value = kolom[4].innerText;
-                    document.getElementById('hargaPerBulan').value = kolom[5].innerText.replace(/[^\d]/g, '');
+                    // document.getElementById('namaPenyewa').value = kolom[1].innerText;
+                    // document.getElementById('email').value = kolom[2].innerText;
+                    // document.getElementById('noHP').value = kolom[3].innerText;
+                    document.getElementById('statusKamar').value = kolom[1].innerText;
+                    document.getElementById('hargaPerBulan').value = kolom[2].innerText.replace(/[^\d]/g, '');
 
                     const modal = new bootstrap.Modal(document.getElementById('tambahKamarModal'));
                     modal.show();

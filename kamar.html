@@ -87,12 +87,19 @@
     </nav>
     
     <!-- Main content -->
-    <main class="col-md-10 ms-sm-auto col-lg-10 p-0">
-        
+    <main class="col-md-10 ms-sm-auto col-lg-10" style="padding: 0;">
+      <!-- Top Navbar -->
       <div class="d-flex justify-content-between align-items-center py-3 brand px-4">
-        <div class="h5 mb-0">Data Kamar</div>
+        <div class="h5 mb-0">Dashboard</div>
         <div class="d-flex align-items-center gap-3">
-          <i class="bi bi-bell-fill fs-5"></i>
+          <div class="dropdown-center">
+            <i class="bi bi-bell-fill fs-5 dropdown-toggle" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" role="button"></i>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="#">test announce</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
           <div><i class="bi bi-person-circle me-1"></i> sadmin</div>
         </div>
       </div>
@@ -165,12 +172,9 @@
             <thead class="table-dark">
               <tr>
                 <th>No Kamar</th>
-                <th>Nama Penyewa</th>
-                <th>Email</th>
-                <th>No HP</th>
                 <th>Status Kamar</th>
-                <th>Harga / Bulan</th>
-                <th>Action</th>
+                <th>Harga / Bulan</th> 
+                <th>Aksi</th> 
               </tr>
             </thead>
             <tbody id="tabelKamar">
@@ -195,18 +199,6 @@
         <div class="mb-3">
           <label class="form-label">Nomor</label>
           <input type="text" class="form-control" id="nomor" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Nama Penyewa</label>
-          <input type="text" class="form-control" id="namaPenyewa">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-control" id="email">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">No HP</label>
-          <input type="text" class="form-control" id="noHP">
         </div>
         <div class="mb-3">
           <label class="form-label">Status Kamar</label>

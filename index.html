@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <style>
 
@@ -19,6 +20,9 @@
       height: 100vh;
       background-color: #252321;
       color: white;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
     }
 
     .sidebar .nav-link {
@@ -30,6 +34,7 @@
       background-color: #32302D;
       color: white;
     }
+
     
     .brand {
       background-color: #cfc6b4;
@@ -54,6 +59,16 @@
     .menu-list {
         padding: 0.75rem 0 0.75rem 0;
         font-size: 20px;
+    }
+
+    #pengingatList {
+      max-height: 160px; /* 3 item cukup */
+      overflow-y: auto;
+    }
+
+    #pengeluaranTerbaruList {
+      max-height: 160px;
+      overflow-y: auto;
     }
   </style>
 </head>
@@ -94,20 +109,46 @@
       <div class="d-flex justify-content-between align-items-center py-3 brand px-4">
         <div class="h5 mb-0">Dashboard</div>
         <div class="d-flex align-items-center gap-3">
-          <i class="bi bi-bell-fill fs-5" id="notificationIcon" style="cursor: pointer;"></i>
+          <div class="dropdown-center">
+            <i class="bi bi-bell-fill fs-5 dropdown-toggle" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" role="button"></i>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="#">test announce</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </div>
           <div><i class="bi bi-person-circle me-1"></i> sadmin</div>
         </div>
       </div>
 
       <!-- Content -->
       <div class="container mt-4">
+        <div class="row mb-4 align-items-center">
+          <div class="col-md-4">
+            <label for="filterRange" class="form-label fw-semibold">Filter Waktu</label>
+            <select class="form-select" id="filterRange">
+              <option value="bulan_ini">Bulan Ini</option>
+              <option value="bulan_lalu">Bulan Lalu</option>
+              <option value="3_bulan">3 Bulan Terakhir</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div class="col-md-4 d-none" id="customRange">
+            <label class="form-label fw-semibold">Pilih Tanggal</label>
+            <div class="d-flex gap-2">
+              <input type="date" id="startDate" class="form-control">
+              <input type="date" id="endDate" class="form-control">
+            </div>
+          </div>
+        </div>
+        
         <!-- Statistik cards -->
-        <div class="row g-3">
+        <div class="row g-3" id="statCards">
           <div class="col-md-3">
             <div class="card text-white bg-success card-stat p-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h4>2</h4>
+                  <h4 id="cardKamarTerisi">0</h4>
                   <p class="mb-0">Kamar terisi</p>
                 </div>
                 <i class="bi bi-house-door-fill card-icon"></i>
@@ -118,7 +159,7 @@
             <div class="card text-white bg-danger card-stat p-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h4>13</h4>
+                  <h4 id="cardKamarKosong">0</h4>
                   <p class="mb-0">Kamar kosong</p>
                 </div>
                 <i class="bi bi-house-door card-icon"></i>
@@ -129,7 +170,7 @@
             <div class="card text-white bg-warning card-stat p-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h5>Rp. 2.000.000</h5>
+                  <h5 id="cardPemasukan">Rp. 0</h5>
                   <p class="mb-0">Pemasukan</p>
                 </div>
                 <i class="bi bi-stack card-icon"></i>
@@ -140,7 +181,7 @@
             <div class="card text-white bg-primary card-stat p-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h5>Rp. 1.000.000</h5>
+                  <h5 id="cardPengeluaran">Rp. 0</h5>
                   <p class="mb-0">Pengeluaran</p>
                 </div>
                 <i class="bi bi-stack card-icon"></i>
@@ -149,25 +190,50 @@
           </div>
         </div>
 
-        <!-- Placeholder untuk isi dashboard -->
+        <!-- Chart -->
         <div class="row mt-4">
           <div class="col-md-6">
             <div class="card p-3">
               <h6>Distribusi status sewa</h6>
-              <!-- Konten chart nanti di sini -->
+              <canvas id="statusChart" style="max-height: 220px;"></canvas>
+              <small class="text-muted mt-2 d-block">x penyewa sudah melunaskan pembayaran.</small>
             </div>
           </div>
           <div class="col-md-6">
             <div class="card p-3">
               <h6>Pembayaran Sewa Bulan ini</h6>
-              <!-- Konten pembayaran nanti di sini -->
+              <canvas id="pembayaranChart" style="max-height: 249px;"></canvas>
             </div>
           </div>
         </div>
+        
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <div class="card shadow-sm p-3 bg-light">
+              <h6 class="mb-3">🔔 Pengingat Jatuh Tempo</h6>
+              <div class="list-group" id="pengingatList">
+                <!-- Diisi oleh JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <div class="card shadow-sm p-3 bg-light">
+              <h6 class="mb-3">💸 Pengeluaran Terbaru</h6>
+              <div class="list-group" id="pengeluaranTerbaruList">
+                <!-- Diisi oleh JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
 </div>
+
 <!-- logout confirmation modal -->
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -204,9 +270,230 @@
   </div>
 </div>
 
+<!-- script -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/global.js">
 
+<script src="js/global.js"></script>
+
+
+<script>
+  const chartDataByRange = {
+    bulan_ini: {
+      labels: ['1', '8', '15', '22', '30'],
+      values: [120000, 180000, 100000, 170000, 200000],
+      pemasukan: 'Rp. ' + [120000, 180000, 100000, 170000, 200000].reduce((a,b)=>a+b).toLocaleString('id-ID'),
+      pengeluaran: 'Rp. 1.000.000',
+      sewaStatus: [10, 4, 1],
+      kamarTerisi: 2,
+      kamarKosong: 13
+    },
+    bulan_lalu: {
+      labels: ['1', '8', '15', '22', '30'],
+      values: [100000, 90000, 110000, 120000, 150000],
+      pemasukan: 'Rp. ' + [100000, 90000, 110000, 120000, 150000].reduce((a,b)=>a+b).toLocaleString('id-ID'),
+      pengeluaran: 'Rp. 800.000',
+      sewaStatus: [7, 5, 2],
+      kamarTerisi: 1,
+      kamarKosong: 14
+    },
+    "3_bulan": {
+      labels: ['Apr', 'Mei', 'Jun'],
+      values: [500000, 450000, 600000],
+      pemasukan: 'Rp. ' + [500000, 450000, 600000].reduce((a,b)=>a+b).toLocaleString('id-ID'),
+      pengeluaran: 'Rp. 2.500.000',
+      sewaStatus: [25, 8, 2],
+      kamarTerisi: 4,
+      kamarKosong: 11
+    }
+  };
+
+  const statusChart = new Chart(document.getElementById('statusChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Lunas', 'Belum Lunas', 'Gagal'],
+      datasets: [{
+        data: chartDataByRange['bulan_ini'].sewaStatus,
+        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+      }]
+    },
+    options: { plugins: { legend: { position: 'bottom' } }, cutout: '70%' }
+  });
+
+  const pembayaranChart = new Chart(document.getElementById('pembayaranChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: chartDataByRange['bulan_ini'].labels,
+      datasets: [{
+        label: 'Rp',
+        data: chartDataByRange['bulan_ini'].values,
+        backgroundColor: '#0d6efd'
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  function updateChartAndCards(filterKey) {
+    if (!chartDataByRange[filterKey]) return;
+    const data = chartDataByRange[filterKey];
+    pembayaranChart.data.labels = data.labels;
+    pembayaranChart.data.datasets[0].data = data.values;
+    pembayaranChart.update();
+
+    statusChart.data.datasets[0].data = data.sewaStatus;
+    statusChart.update();
+
+    document.getElementById('cardPemasukan').innerText = data.pemasukan;
+    document.getElementById('cardPengeluaran').innerText = data.pengeluaran;
+    document.getElementById('cardKamarTerisi').innerText = data.kamarTerisi;
+    document.getElementById('cardKamarKosong').innerText = data.kamarKosong;
+  }
+
+  document.getElementById('filterRange').addEventListener('change', function () {
+    const selected = this.value;
+    const customDiv = document.getElementById('customRange');
+    if (selected === 'custom') {
+      customDiv.classList.remove('d-none');
+      resetCustomRange();
+    } else {
+      customDiv.classList.add('d-none');
+      updateChartAndCards(selected);
+      resetCustomRange();
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    updateChartAndCards('bulan_ini');
+  });
+</script>
+  
+<script>
+  document.getElementById('endDate').addEventListener('change', () => {
+    const start = document.getElementById('startDate').value;
+    const end = document.getElementById('endDate').value;
+    if (start && end) {
+      const simulatedData = {
+        labels: ['02/01', '02/10', '02/20', '03/01', '03/10'],
+        values: [100000, 130000, 90000, 110000, 150000],
+        sewaStatus: [6, 3, 1],
+        pemasukan: 'Rp. 580.000',
+        pengeluaran: 'Rp. 900.000',
+        kamarTerisi: 3,
+        kamarKosong: 12
+      };
+
+      pembayaranChart.data.labels = simulatedData.labels;
+      pembayaranChart.data.datasets[0].data = simulatedData.values;
+      pembayaranChart.update();
+
+      statusChart.data.datasets[0].data = simulatedData.sewaStatus;
+      statusChart.update();
+
+      document.getElementById('cardPemasukan').innerText = simulatedData.pemasukan;
+      document.getElementById('cardPengeluaran').innerText = simulatedData.pengeluaran;
+      document.getElementById('cardKamarTerisi').innerText = simulatedData.kamarTerisi;
+      document.getElementById('cardKamarKosong').innerText = simulatedData.kamarKosong;
+    }
+  });
+</script>  
+
+<!-- Script untuk pengingat jatuh tempo -->
+<script>
+  // Data dummy tagihan
+  const pembayaranJatuhTempo = [
+    { nama: 'Zulfa', tanggal: '2025-05-21' },
+    { nama: 'Budi', tanggal: '2025-05-24' },
+    { nama: 'Rara', tanggal: '2025-05-25' },
+    { nama: 'Riski', tanggal: '2025-05-26' },
+    { nama: 'Cici', tanggal: '2025-05-27' }
+  ];
+
+  const masaSewaHabis = [
+    { kamar: '1.2', tanggalBerakhir: '2025-05-21' },
+    { kamar: '2.3', tanggalBerakhir: '2025-05-22' },
+    { kamar: '3.1', tanggalBerakhir: '2025-05-23' },
+    { kamar: '3.2', tanggalBerakhir: '2025-05-24' },
+    { kamar: '4.1', tanggalBerakhir: '2025-05-25' }
+  ];
+
+function tampilkanPengingat() {
+  const container = document.getElementById('pengingatList');
+  container.innerHTML = '';
+  const hariIni = new Date();
+
+  pembayaranJatuhTempo.forEach(item => {
+    const jatuhTempo = new Date(item.tanggal);
+    const selisih = (jatuhTempo - hariIni) / (1000 * 60 * 60 * 24);
+
+    if (selisih >= 0 && selisih <= 7) {
+      const el = document.createElement('div');
+      el.className = 'list-group-item';
+      el.textContent = `🧾 ${item.nama} harus membayar sebelum ${jatuhTempo.toLocaleDateString('id-ID')}`;
+      container.appendChild(el);
+    }
+  });
+
+  masaSewaHabis.forEach(sewa => {
+    const akhir = new Date(sewa.tanggalBerakhir);
+    const sisaHari = (akhir - hariIni) / (1000 * 60 * 60 * 24);
+
+    if (sisaHari >= 0 && sisaHari <= 7) {
+      const el = document.createElement('div');
+      el.className = 'list-group-item';
+      el.textContent = `🏠 Sewa kamar ${sewa.kamar} habis pada ${akhir.toLocaleDateString('id-ID')}`;
+      container.appendChild(el);
+    }
+  });
+}
+
+  document.addEventListener('DOMContentLoaded', tampilkanPengingat);
+</script>
+
+<!-- Script pengeluaran terbaru -->
+<script>
+ const pengeluaranDataDummy = [
+    { keterangan: 'Perbaikan kamar 2A', tanggal: '2025-05-10', jumlah: 350000 },
+    { keterangan: 'Bayar listrik', tanggal: '2025-05-09', jumlah: 500000 },
+    { keterangan: 'Kebersihan mingguan', tanggal: '2025-05-08', jumlah: 150000 },
+    { keterangan: 'Beli alat kebersihan', tanggal: '2025-05-07', jumlah: 80000 },
+    { keterangan: 'Service AC kamar 1.1', tanggal: '2025-05-06', jumlah: 400000 }
+  ];
+  
+  function tampilkanPengeluaranTerbaru() {
+  const list = document.getElementById('pengeluaranTerbaruList');
+  list.innerHTML = '';
+
+  pengeluaranDataDummy.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'list-group-item d-flex justify-content-between align-items-center';
+    el.innerHTML = `
+      <div>
+        <strong>${item.tanggal}</strong> - ${item.keterangan}
+      </div>
+      <span class="badge bg-danger text-white">Rp ${item.jumlah.toLocaleString('id-ID')}</span>
+    `;
+    list.appendChild(el);
+  });
+}
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    tampilkanPengingat();
+    tampilkanPengeluaranTerbaru();  // ← aktifkan
+  });
+</script>
+
+
+<script>
+  function resetCustomRange() {
+    const today = new Date().toISOString().split('T')[0];
+    const startInput = document.getElementById('startDate');
+    const endInput = document.getElementById('endDate');
+
+    startInput.value = today;
+    endInput.value = today;
+  }
 </script>
 
 </body>
