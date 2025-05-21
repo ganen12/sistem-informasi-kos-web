@@ -110,10 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Tombol delete
                 barisBaru.querySelector('.btn-delete').addEventListener('click', function () {
-                    if (confirm('Yakin ingin menghapus data ini?')) {
-                        barisBaru.remove();
-                        tampilkanToast('Data kamar berhasil dihapus!', 'success');
-                    }
+                    barisBaru.remove()
                 });
 
                 // Tombol edit

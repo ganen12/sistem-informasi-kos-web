@@ -48,10 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 tabelPenyewa.appendChild(baris);
 
                 baris.querySelector('.btn-delete').addEventListener('click', function () {
-                    if (confirm('Yakin ingin menghapus data ini?')) {
-                        baris.remove();
-                        tampilkanToast("Data penyewa berhasil dihapus!");
-                    }
+                    baris.remove();
                 });
 
                 baris.querySelector('.btn-edit').addEventListener('click', function () {

@@ -81,6 +81,7 @@
         <li>
           <a href="#" class="nav-link active"><i class="bi bi-receipt me-2 menu-list"></i>Pembayaran</a>
         </li>
+        <li><a href="pengeluaran.html" class="nav-link"><i class="bi bi-stack me-2 menu-list"></i>Pengeluaran</a></li>
         <li class="mt-4 text-uppercase small section-label">Lainnya</li>
         <li><a href="keluhan.html" class="nav-link"><i class="bi bi-exclamation-triangle me-2 menu-list"></i>Keluhan</a></li>
       </ul>
@@ -115,13 +116,31 @@
 
       <!-- Content -->
       <div class="container mt-4">
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-4">
+              <label for="filterRange" class="form-label fw-semibold">Filter Waktu</label>
+              <select class="form-select" id="filterRange">
+                <option value="bulan_ini">Bulan Ini</option>
+                <option value="bulan_lalu">Bulan Lalu</option>
+                <option value="3_bulan">3 Bulan Terakhir</option>
+                <option value="custom">Custom Range</option>
+              </select>
+            </div>
+            <div class="col-md-4 d-none" id="customRange">
+              <label class="form-label fw-semibold">Pilih Tanggal</label>
+              <div class="d-flex gap-2">
+                <input type="date" id="startDate" class="form-control" />
+                <input type="date" id="endDate" class="form-control" />
+              </div>
+            </div>
+        </div> 
         <div class="row g-3">
           <div class="col-md-4">
             <div class="card text-white bg-warning card-stat p-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
                   <h4 id="totalSewaCount">0</h4>
-                  <p class="mb-0">Total Sewa</p>
+                  <p class="mb-0">Total Pembayaran</p>
                 </div>
                 <i class="bi bi-calendar-event-fill card-icon"></i>
               </div>
@@ -131,7 +150,7 @@
             <div class="card text-white bg-success card-stat p-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h5 id="totalDibayar">Rp 0</h5>
+                  <h5 id="totalDibayar">0</h5>
                   <p class="mb-0">Dibayar</p>
                 </div>
                 <i class="bi bi-arrow-up-right-circle-fill card-icon"></i>
@@ -142,7 +161,7 @@
             <div class="card text-white bg-danger card-stat p-3">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <h5 id="totalBelumDibayar">Rp 0</h5>
+                  <h5 id="totalBelumDibayar">0</h5>
                   <p class="mb-0">Belum Dibayar</p>
                 </div>
                 <i class="bi bi-arrow-down-left-circle-fill card-icon"></i>
@@ -169,6 +188,7 @@
           <table class="table table-striped">
             <thead class="table-dark">
               <tr>
+                <th>Tanggal Pembayaran</th>
                 <th>Nama Penyewa</th>
                 <th>Properti</th>
                 <th>Kamar</th>
@@ -199,6 +219,10 @@
       </div>
       <div class="modal-body">
         <form id="formPembayaran">
+          <div class="mb-3">
+            <label class="form-label">Tanggal Pembayaran</label>
+            <input type="date" class="form-control" id="tanggalPembayaran" required>
+          </div>
           <div class="mb-3">
             <label class="form-label">Nama Penyewa</label>
             <input type="text" class="form-control" id="nama" required>
@@ -231,7 +255,6 @@
               <option value="Tertunda">Tertunda</option>
             </select>
           </div>
-          
           <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
       </div>

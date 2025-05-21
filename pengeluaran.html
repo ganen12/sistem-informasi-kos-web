@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Penyewa</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #E4E4E4;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .sidebar {
+      height: 100vh;
+      background-color: #252321;
+      color: white;
+    }
+
+    .sidebar .nav-link {
+      color: #ccc;
+    }
+
+    .sidebar .nav-link.active,
+    .sidebar .nav-link:hover {
+      background-color: #32302D;
+      color: white;
+    }
+
+    .brand {
+      background-color: #cfc6b4;
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+    }
+    .card-stat {
+      min-height: 80px;
+    }
+
+    .menu-list {
+      padding: 0.75rem 0 0.75rem 0;
+      font-size: 20px;
+    }
+
+    .section-label {
+      color: rgba(238, 237, 235, 0.30);
+      font-family: Montserrat;
+      font-style: normal;
+      font-weight: 200;
+      line-height: normal;
+      letter-spacing: 1.2px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-2 sidebar d-flex flex-column p-3">
+      <div class="mb-4">
+        <h5><i class="bi bi-house-door-fill me-2"></i>Kos Husni</h5>
+      </div>
+      <ul class="nav flex-column mb-auto">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link"><i class="bi bi-house-door me-2 menu-list"></i>Dashboard</a>
+        </li>
+        <li class="mt-4 text-uppercase small section-label">Data</li>
+        <li>
+          <a href="kamar.html" class="nav-link"><i class="bi bi-door-closed me-2 menu-list"></i>Kamar</a>
+        </li>
+        <li>
+          <a href="penyewa.html" class="nav-link"><i class="bi bi-people-fill me-2 menu-list"></i>Penyewa</a>
+        </li>
+        <li class="mt-4 text-uppercase small section-label">Transaksi</li>
+        <li>
+          <a href="pembayaran.html" class="nav-link"><i class="bi bi-receipt me-2 menu-list"></i>Pembayaran</a>
+        </li>
+        <li><a href="#" class="nav-link active"><i class="bi bi-stack me-2 menu-list"></i>Pengeluaran</a></li>
+        <li class="mt-4 text-uppercase small section-label">Lainnya</li>
+        <li><a href="keluhan.html" class="nav-link"><i class="bi bi-exclamation-triangle me-2 menu-list"></i>Keluhan</a></li>
+      </ul>
+      <div class="mt-auto">
+        <ul class="nav flex-column mb-auto">
+            <li class="">
+                <a href="#" class="nav-link text-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <i class="bi bi-box-arrow-right me-2 menu-list"></i>Logout
+                </a>
+            </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="col-md-10 ms-sm-auto col-lg-10" style="padding: 0;">
+        <!-- Top Navbar -->
+        <div class="d-flex justify-content-between align-items-center py-3 brand px-4">
+          <div class="h5 mb-0">Pengeluaran</div>
+          <div class="d-flex align-items-center gap-3">
+            <div class="dropdown-center">
+              <i class="bi bi-bell-fill fs-5 dropdown-toggle" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false" role="button"></i>
+              <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item" href="#">test announce</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+            </div>
+            <div><i class="bi bi-person-circle me-1"></i> sadmin</div>
+          </div>
+        </div>
+        
+
+        <!-- Content -->
+        <div class="container mt-4">
+            <div class="row mb-4 align-items-center">
+                <div class="col-md-4">
+                  <label for="filterRange" class="form-label fw-semibold">Filter Waktu</label>
+                  <select class="form-select" id="filterRange">
+                    <option value="bulan_ini">Bulan Ini</option>
+                    <option value="bulan_lalu">Bulan Lalu</option>
+                    <option value="3_bulan">3 Bulan Terakhir</option>
+                    <option value="custom">Custom Range</option>
+                  </select>
+                </div>
+                <div class="col-md-4 d-none" id="customRange">
+                  <label class="form-label fw-semibold">Pilih Tanggal</label>
+                  <div class="d-flex gap-2">
+                    <input type="date" id="startDate" class="form-control" />
+                    <input type="date" id="endDate" class="form-control" />
+                  </div>
+                </div>
+            </div>              
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="card text-white bg-warning card-stat p-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h4 id="totalPengeluaran">0</h4>
+                      <p class="mb-0">Total Pengeluaran</p>
+                    </div>
+                    <i class="bi bi-cash-stack card-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card text-white bg-success card-stat p-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 id="jumlahTerakhir">0</h5>
+                      <p class="mb-0">Pengeluaran Terakhir</p>
+                    </div>
+                    <i class="bi bi-check-circle-fill card-icon"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card text-white bg-danger card-stat p-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 id="jumlahTerbanyak">0</h5>
+                      <p class="mb-0">Terbesar</p>
+                    </div>
+                    <i class="bi bi-arrow-up-circle-fill card-icon"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+
+
+      <div class="container-fluid mt-4">
+        <div class="card p-4">
+          <div class="d-flex justify-content-between mb-3">
+            <h5>Data Pengeluaran</h5>
+            <div class="d-flex gap-2">
+              <input type="text" class="form-control" placeholder="Cari..." id="searchInput" />
+              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPengeluaran">
+                <i class="bi bi-plus-circle me-2"></i>Tambah Pengeluaran
+              </button>
+            </div>
+          </div>
+          <table class="table table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Tanggal</th>
+                <th>Deskripsi</th>
+                <th>Jumlah</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tabelPengeluaran">
+              <!-- Data otomatis diisi JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal Tambah/Edit Pengeluaran -->
+<div class="modal fade" id="modalPengeluaran" tabindex="-1" aria-labelledby="modalPengeluaranLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPengeluaranLabel">Tambah Pengeluaran</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formPengeluaran">
+            <div class="mb-3">
+              <label class="form-label">Tanggal</label>
+              <input type="date" class="form-control" id="tanggal" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Deskripsi</label>
+              <input type="text" class="form-control" id="deskripsi" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Jumlah (Rp)</label>
+              <input type="text" class="form-control rupiah" id="jumlah" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- logout confirmation modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin keluar dari sistem?</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-start">
+        <button type="button" class="btn btn-danger" id="confirmLogout">Logout</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+  <div id="toastNotifikasi" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="pesanToast">Berhasil!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/pengeluaran.js"></script>
+
+<script src="js/global.js"></script>
+
+</body>
+</html>

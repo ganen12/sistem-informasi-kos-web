@@ -1,5 +1,7 @@
+// js/pembayaran.js
+
 function formatRupiah(angka) {
-    const numberString = angka.replace(/[^,\d]/g, '').toString();
+    const numberString = angka.replace(/[^\d]/g, '').toString();
     const split = numberString.split(',');
     let sisa = split[0].length % 3;
     let rupiah = split[0].substr(0, sisa);
@@ -27,35 +29,78 @@ function tampilkanToast(pesan, tipe = 'success') {
     }
 }
 
+function filterDataByRange(range) {
+    const rows = document.querySelectorAll('#tabelPembayaran tr');
+    const today = new Date();
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    rows.forEach(row => {
+        const tanggal = new Date(row.children[0].innerText);
+        let tampil = false;
+
+        if (range === 'bulan_ini') {
+            tampil = tanggal.getMonth() === today.getMonth() && tanggal.getFullYear() === today.getFullYear();
+        } else if (range === 'bulan_lalu') {
+            const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            tampil = tanggal.getMonth() === lastMonth.getMonth() && tanggal.getFullYear() === lastMonth.getFullYear();
+        } else if (range === '3_bulan') {
+            const threeMonthsAgo = new Date(today);
+            threeMonthsAgo.setMonth(today.getMonth() - 2);
+            tampil = tanggal >= threeMonthsAgo;
+        } else if (range === 'custom') {
+            const start = new Date(startDateInput.value);
+            const end = new Date(endDateInput.value);
+            tampil = tanggal >= start && tanggal <= end;
+        } else {
+            tampil = true;
+        }
+
+        row.style.display = tampil ? '' : 'none';
+    });
+
+    updateRingkasan();
+}
+
 function updateRingkasan() {
-    const tabelPembayaran = document.getElementById('tabelPembayaran');
-    if (tabelPembayaran) {
-        const rows = tabelPembayaran.querySelectorAll('tr');
-        let total = 0;
+    const tabel = document.getElementById('tabelPembayaran');
+    if (tabel) {
+        const rows = tabel.querySelectorAll('tr');
+        let totalTagihan = 0;
         let totalDibayar = 0;
-        let totalBelumDibayar = 0;
+        let terakhirDibayar = { jumlah: 0, tanggal: null };
 
         rows.forEach(row => {
-            const totalTagihanText = row.children[3].innerText.replace(/[\D]/g, '');
-            const jumlahDibayarText = row.children[4].innerText.replace(/[\D]/g, '');
-            const totalTagihan = parseInt(totalTagihanText) || 0;
-            const jumlahDibayar = parseInt(jumlahDibayarText) || 0;
+            if (row.style.display === 'none') return;
 
-            total++;
-            totalDibayar += jumlahDibayar;
-            totalBelumDibayar += Math.max(totalTagihan - jumlahDibayar, 0);
+            const tanggalText = row.children[0].innerText;
+            const tagihanText = row.children[4].innerText.replace(/[^\d]/g, '');
+            const dibayarText = row.children[5].innerText.replace(/[^\d]/g, '');
+
+            const tanggal = new Date(tanggalText);
+            const tagihan = parseInt(tagihanText) || 0;
+            const dibayar = parseInt(dibayarText) || 0;
+
+            totalTagihan += tagihan;
+            totalDibayar += dibayar;
+
+            if (!terakhirDibayar.tanggal || tanggal > new Date(terakhirDibayar.tanggal)) {
+                terakhirDibayar = { jumlah: dibayar, tanggal: tanggalText };
+            }
         });
 
-        document.getElementById('totalSewaCount').innerText = total;
+        const belumDibayar = totalTagihan - totalDibayar;
+
+        document.getElementById('totalSewaCount').innerText = 'Rp ' + totalTagihan.toLocaleString('id-ID');
         document.getElementById('totalDibayar').innerText = 'Rp ' + totalDibayar.toLocaleString('id-ID');
-        document.getElementById('totalBelumDibayar').innerText = 'Rp ' + totalBelumDibayar.toLocaleString('id-ID');
+        document.getElementById('totalBelumDibayar').innerText = 'Rp ' + belumDibayar.toLocaleString('id-ID');
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Format real-time saat user mengetik
     document.querySelectorAll('.rupiah').forEach((input) => {
-        input.addEventListener('input', function (e) {
+        input.addEventListener('input', function () {
             const cursorPos = this.selectionStart;
             const formatted = formatRupiah(this.value);
             this.value = formatted;
@@ -64,44 +109,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     let barisSedangDiedit = null;
+    const form = document.getElementById('formPembayaran');
+    const tabel = document.getElementById('tabelPembayaran');
 
-    // Submit ke tabel daftar data
-    const formPembayaran = document.getElementById('formPembayaran');
-    const tabelPembayaran = document.getElementById('tabelPembayaran');
-    if (formPembayaran && tabelPembayaran) {
-        formPembayaran.addEventListener('submit', function (e) {
+    if (form && tabel) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const totalSewaRaw = document.getElementById('totalSewa').value.replace(/\./g, '');
-            const jumlahDibayarRaw = document.getElementById('jumlahDibayar').value.replace(/\./g, '');
-
+            const tanggal = document.getElementById('tanggalPembayaran').value;
             const nama = document.getElementById('nama').value;
             const properti = document.getElementById('properti').value;
             const kamar = document.getElementById('kamar').value;
-            const totalSewa = parseInt(totalSewaRaw).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
-            const jumlahDibayar = parseInt(jumlahDibayarRaw).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
+            const totalSewa = formatRupiah(document.getElementById('totalSewa').value);
+            const jumlahDibayar = formatRupiah(document.getElementById('jumlahDibayar').value);
             const jatuhTempo = document.getElementById('jatuhTempo').value;
             const status = document.getElementById('statusPembayaran').value;
 
-
             if (barisSedangDiedit) {
-                // Update baris yang sedang diedit
                 const kolom = barisSedangDiedit.querySelectorAll('td');
-                kolom[0].innerText = nama;
-                kolom[1].innerText = properti;
-                kolom[2].innerText = kamar;
-                kolom[3].innerText = totalSewa;
-                kolom[4].innerText = jumlahDibayar;
-                kolom[5].innerText = jatuhTempo;
-                kolom[6].innerText = status;
-
-
-                barisSedangDiedit = null; // Reset
-                tampilkanToast('Data berhasil diperbarui!', 'success');
+                kolom[0].innerText = tanggal;
+                kolom[1].innerText = nama;
+                kolom[2].innerText = properti;
+                kolom[3].innerText = kamar;
+                kolom[4].innerText = totalSewa;
+                kolom[5].innerText = jumlahDibayar;
+                kolom[6].innerText = jatuhTempo;
+                kolom[7].innerText = status;
+                barisSedangDiedit = null;
+                tampilkanToast('Data diperbarui!');
             } else {
-                // Tambah baris baru
-                const barisBaru = document.createElement('tr');
-                barisBaru.innerHTML = `
+                const baris = document.createElement('tr');
+                baris.innerHTML = `
+                    <td>${tanggal}</td>
                     <td>${nama}</td>
                     <td>${properti}</td>
                     <td>${kamar}</td>
@@ -114,54 +153,56 @@ document.addEventListener('DOMContentLoaded', function() {
                         <button class="btn btn-sm btn-danger btn-delete">Hapus</button>
                     </td>
                 `;
-                tabelPembayaran.appendChild(barisBaru);
+                tabel.appendChild(baris);
 
-                // Tambahkan event listener lagi ke tombol baru
-                barisBaru.querySelector('.btn-delete').addEventListener('click', function () {
-                    if (confirm('Apakah yakin ingin menghapus data ini?')) {
-                        barisBaru.remove();
-                        tampilkanToast('Data berhasil dihapus!', 'success');
-                    }
+                baris.querySelector('.btn-delete').addEventListener('click', () => {
+                    baris.remove();
+                    updateRingkasan();
                 });
 
-                barisBaru.querySelector('.btn-edit').addEventListener('click', function () {
-                    barisSedangDiedit = barisBaru;
-                    const kolom = barisBaru.querySelectorAll('td');
-                    document.getElementById('nama').value = kolom[0].innerText;
-                    document.getElementById('properti').value = kolom[1].innerText;
-                    document.getElementById('kamar').value = kolom[2].innerText;
-                    document.getElementById('totalSewa').value = kolom[3].innerText.replace(/[^\d]/g, '');
-                    document.getElementById('jumlahDibayar').value = kolom[4].innerText.replace(/[^\d]/g, '');
-                    document.getElementById('jatuhTempo').value = kolom[5].innerText;
-                    document.getElementById('statusPembayaran').value = kolom[6].innerText;
-
-
-                    const modal = new bootstrap.Modal(document.getElementById('tambahPembayaranModal'));
-                    modal.show();
+                baris.querySelector('.btn-edit').addEventListener('click', () => {
+                    barisSedangDiedit = baris;
+                    const kolom = baris.querySelectorAll('td');
+                    document.getElementById('tanggalPembayaran').value = kolom[0].innerText;
+                    document.getElementById('nama').value = kolom[1].innerText;
+                    document.getElementById('properti').value = kolom[2].innerText;
+                    document.getElementById('kamar').value = kolom[3].innerText;
+                    document.getElementById('totalSewa').value = kolom[4].innerText.replace(/\D/g, '');
+                    document.getElementById('jumlahDibayar').value = kolom[5].innerText.replace(/\D/g, '');
+                    document.getElementById('jatuhTempo').value = kolom[6].innerText;
+                    document.getElementById('statusPembayaran').value = kolom[7].innerText;
+                    new bootstrap.Modal(document.getElementById('tambahPembayaranModal')).show();
                 });
+
+                tampilkanToast('Data ditambahkan!');
             }
 
-            // Reset dan tutup form
-            formPembayaran.reset();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('tambahPembayaranModal'));
-            modal.hide();
+            form.reset();
+            bootstrap.Modal.getInstance(document.getElementById('tambahPembayaranModal')).hide();
             updateRingkasan();
         });
     }
 
-    const searchInputPembayaran = document.getElementById('searchInput');
-    const tabelKeluhanPembayaran = document.getElementById('tabelPembayaran');  // Pastikan ID tabel benar
-    if (searchInputPembayaran && tabelKeluhanPembayaran) {
-        searchInputPembayaran.addEventListener('input', function () {
-            const keyword = this.value.toLowerCase();
-            const rows = tabelKeluhanPembayaran.querySelectorAll('tr');  // Use tabelKeluhan
-            rows.forEach(row => {
-                const rowText = row.innerText.toLowerCase();
-                row.style.display = rowText.includes(keyword) ? '' : 'none';
-            });
+    document.getElementById('searchInput').addEventListener('input', function () {
+        const keyword = this.value.toLowerCase();
+        document.querySelectorAll('#tabelPembayaran tr').forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(keyword) ? '' : 'none';
         });
-    }
+        updateRingkasan();
+    });
 
-    // Inisialisasi ringkasan saat halaman dimuat
-    updateRingkasan();
+    document.getElementById('filterRange').addEventListener('change', function () {
+        const val = this.value;
+        document.getElementById('customRange').classList.toggle('d-none', val !== 'custom');
+        filterDataByRange(val);
+    });
+
+    document.getElementById('endDate').addEventListener('change', () => {
+        if (document.getElementById('filterRange').value === 'custom') {
+            filterDataByRange('custom');
+        }
+    });
+
+    document.getElementById('filterRange').value = 'bulan_ini';
+    filterDataByRange('bulan_ini');
 });
